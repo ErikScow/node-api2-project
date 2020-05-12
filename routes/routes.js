@@ -24,6 +24,7 @@ router.post('/:id/comments', (req, res) => {
     } else if(!req.body.text) {
         res.status(400).json({ errorMessage: "Please provide text for the comment." })
     } else {
+        req.body.post_id = req.params.id
         db.insertComment(req.body)
             .then(comment => {
                 res.status(201).json(comment)
@@ -47,11 +48,25 @@ router.get('/', (req, res) => {
 })
 
 router.get('/:id', (req, res) => {
-
+    db.findById(req.params.id)
+        .then(post => {
+            res.status(200).json(post)
+        })
+        .catch(error => {
+            console.log('get by id db error: ', error)
+            res.status(500).json({ error: "The post information could not be retrieved." })
+        })
 })
 
 router.get('/:id/comments', (req, res) => {
-
+    db.findPostComments(req.params.id)
+        .then(comment => {
+            res.status(200).json(comment)
+        })
+        .catch(error => {
+            console.log('get by comment id db error: ', error)
+            res.status(500).json({ error: "The comments information could not be retrieved." })
+        })
 })
 
 router.delete('/:id', (req, res) => {
