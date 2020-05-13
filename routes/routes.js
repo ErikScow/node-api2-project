@@ -133,17 +133,22 @@ router.put('/:id', (req, res) => {
                                 })
                                 .catch(error => {
                                     console.log('put request error: couldnt find updated data: ', error)
+                                    res.status(500).json({ error: "The post information could not be modified." })
                                 })
                             res.status(200).json
+                        } else {
+                            res.status(500).json({ error: "The post information could not be modified." })
                         }
                     })
                     .catch(error => {
                         console.log('put request error: couldnt update the data: ', error)
+                        res.status(500).json({ error: "The post information could not be modified." })
                     })
             }
         })
         .catch(error => {
             console.log('put request error: couldnt find the data to update: ', error)
+            res.status(500).json({ error: "The post information could not be modified." })
         })
 })
 
