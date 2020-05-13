@@ -117,7 +117,34 @@ router.delete('/:id', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
-
+    db.findById(req.params.id)
+        .then(post => {
+            if (post.length === 0) {
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            } else if (!req.body.title || !req.body.contents){
+                res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+            } else {
+                db.update(req.params.id, req.body)
+                    .then(updatedCount => {
+                        if (updatedCount === 1){
+                            db.findById(req.params.id)
+                                .then(post => {
+                                    res.status(200).json(post)
+                                })
+                                .catch(error => {
+                                    console.log('put request error: couldnt find updated data: ', error)
+                                })
+                            res.status(200).json
+                        }
+                    })
+                    .catch(error => {
+                        console.log('put request error: couldnt update the data: ', error)
+                    })
+            }
+        })
+        .catch(error => {
+            console.log('put request error: couldnt find the data to update: ', error)
+        })
 })
 
 module.exports = router
