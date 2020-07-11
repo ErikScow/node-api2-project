@@ -109,4 +109,34 @@ router.delete('/:id', (req, res) => {
         })
 })
 
+router.put('/:id', (req, res) => {
+    db.findById(req.params.id)
+        .then(post => {
+            if (post.length !== 0) {
+                if (!req.body.title || !req.body.contents) {
+                    res.status(404).json({ errorMessage: "Please provide title and contents for the post."})
+                } else {
+                    db.update(req.params.id, req.body)
+                        .then(numUpdated => {
+                            db.findById(req.params.id)
+                                .then(post => {
+                                    res.status(200).json(post)
+                                })
+                                .catch(err => {
+                                    res.status(500).json({ message: "couldnt get post after successful update."})
+                                })
+                        })
+                        .catch(err => {
+                            res.status(500).json({error: "Database Error"})
+                        })
+                }
+            } else {
+                res.status(404).json({message: "The post with the specified ID does not exist"})
+            }
+        })
+        .catch(err => {
+            res.status(500).json({error: "Database Error couldnt check database"})
+        })
+})
+
 module.exports = router
