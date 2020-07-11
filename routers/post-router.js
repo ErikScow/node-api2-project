@@ -89,4 +89,24 @@ router.get('/:id/comments', (req, res) => {
         })
 })
 
+router.delete('/:id', (req, res) => {
+    db.findById(req.params.id)
+        .then(post => {
+            if (post.length !== 0) {
+                db.remove(req.params.id)
+                    .then(numDeleted => {
+                        res.status(204).json(numDeleted)
+                    })
+                    .catch(err => {
+                        res.status(500).json({error: "Database Error couldnt delete"})
+                    })
+            } else {
+                res.status(404).json({message: "The post with the specified ID does not exist"})
+            }
+        })
+        .catch(err => {
+            res.status(500).json({error: "Database Error couldnt check database"})
+        })
+})
+
 module.exports = router
